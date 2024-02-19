@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
 
 function App() {
+  const [toDo, setToDo] = useState("");
+  const [toDos, setToDos] = useState([]);
+
+  const onChange = (event) => setToDo(event.target.value);
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    if (toDo === "") return;
+    setToDos((currentArray) => [toDo, ...currentArray]);
+    setToDo("");
+  };
+
+  const handleDelete = (event) => {
+    event.preventDefault();
+    const target = event.target.parentNode.childNodes[0].innerText;
+    setToDos([]);
+    toDos.map((todo) => {
+      if (todo !== target) {
+        setToDos((currentArray) => [...currentArray, todo]);
+        return todo;
+      }
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>투두 앱!({toDos.length})</h1>
+      <form onSubmit={onSubmit}>
+        <input
+          onChange={onChange}
+          value={toDo}
+          type="text"
+          placeholder="write!"
+        />
+        <button>Add To do</button>
+      </form>
+      <hr></hr>
+      <ul>
+        {toDos.map((todo, index) => (
+          <li value={todo} key={index}>
+            <span>{todo}</span>
+            <button onClick={handleDelete}>삭제</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
